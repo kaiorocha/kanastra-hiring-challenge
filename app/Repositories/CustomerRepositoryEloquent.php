@@ -26,6 +26,9 @@ class CustomerRepositoryEloquent extends BaseRepository implements CustomerRepos
         return Customer::class;
     }
 
+    /**
+     * @param Application $app
+     */
     public function __construct(Application $app)
     {
         parent::__construct($app);

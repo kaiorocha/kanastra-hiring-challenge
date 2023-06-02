@@ -30,11 +30,18 @@ class DebitRepositoryEloquent extends BaseRepository implements DebitRepository
         return Debit::class;
     }
 
+    /**
+     * @param Application $app
+     */
     public function __construct(Application $app)
     {
         parent::__construct($app);
     }
 
+    /**
+     * @param array $data
+     * @return \Closure|false
+     */
     public function paid(array $data)
     {
         $debit = $this->findWhere(['external_id' => $data['debtId']])->first(function ($debit) use ($data){
