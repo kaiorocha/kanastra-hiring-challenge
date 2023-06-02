@@ -6,6 +6,7 @@ use App\Models\Debit;
 use App\Notifications\DebitPaid;
 use Carbon\Carbon;
 use Illuminate\Container\Container as Application;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 use Prettus\Repository\Eloquent\BaseRepository;
 use Prettus\Repository\Criteria\RequestCriteria;
@@ -29,11 +30,18 @@ class DebitRepositoryEloquent extends BaseRepository implements DebitRepository
         return Debit::class;
     }
 
+    /**
+     * @param Application $app
+     */
     public function __construct(Application $app)
     {
         parent::__construct($app);
     }
 
+    /**
+     * @param array $data
+     * @return \Closure|false
+     */
     public function paid(array $data)
     {
         $debit = $this->findWhere(['external_id' => $data['debtId']])->first(function ($debit) use ($data){
@@ -50,6 +58,7 @@ class DebitRepositoryEloquent extends BaseRepository implements DebitRepository
         if ($debit->save()) {
             /** Aqui enviaria a notificação de boleto pago ao cliente */
             //Notification::sendNow($debit->customer, new DebitPaid($debit));
+            Log::info("Debit {$debit->id} changed to paid!");
         }
 
         return $debit;

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\Uuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -9,7 +10,7 @@ use Ramsey\Uuid\Uuid;
 
 class Debit extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Uuids;
 
     /**
      * @var string
@@ -20,14 +21,6 @@ class Debit extends Model
      * @var string[]
      */
     protected $fillable = ['customer_id', 'external_id', 'amount', 'paid_amount', 'paid_at', 'due_date'];
-
-    /**
-     * @return void
-     */
-    protected static function booted()
-    {
-        static::creating(fn(Debit $debit) => $debit->id = (string) Uuid::uuid4());
-    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

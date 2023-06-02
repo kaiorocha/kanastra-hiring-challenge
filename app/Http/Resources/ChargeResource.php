@@ -14,6 +14,10 @@ class ChargeResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'amount' => $this->amount,
+            'barcode' => $this->barcode,
+            'due_date' => $this->due_date
+        ];
     }
 }

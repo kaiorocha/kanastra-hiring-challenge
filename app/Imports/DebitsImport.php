@@ -3,12 +3,13 @@
 namespace App\Imports;
 
 use App\Exceptions\ApiException;
-use App\Exceptions\CustomException;
 use App\Http\Resources\DebitResource;
 use App\Repositories\CustomerRepositoryEloquent;
 use App\Repositories\DebitRepositoryEloquent;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -16,28 +17,9 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 class DebitsImport implements ToCollection, WithHeadingRow
 {
     /**
-     * @var CustomerRepositoryEloquent
-     */
-    protected $customerRepository;
-    /**
-     * @var DebitRepositoryEloquent
-     */
-    protected $debitRepository;
-
-    /**
      * @var
      */
     public $debits;
-
-    /**
-     *
-     */
-    public function __construct()
-    {
-        $this->customerRepository = new CustomerRepositoryEloquent(app());
-        $this->debitRepository = new DebitRepositoryEloquent(app());
-    }
-
 
     /**
      * @param Collection $collection
@@ -46,6 +28,8 @@ class DebitsImport implements ToCollection, WithHeadingRow
     public function collection(Collection $collection)
     {
         $debits = collect();
+
+        DB::beginTransaction();
 
         $collection->map(function ($row) use ($debits){
             $validator = $this->rowValidate($row);
@@ -58,10 +42,14 @@ class DebitsImport implements ToCollection, WithHeadingRow
                     $debits->push(new DebitResource($debit));
                 }
             } else {
+                DB::rollBack();
+                Log::info("Import Failed!");
                 throw new ApiException($validator->messages()->first());
             }
 
         });
+
+        DB::commit();
 
         $this->debits = $debits;
     }
@@ -87,7 +75,8 @@ class DebitsImport implements ToCollection, WithHeadingRow
      */
     private function debitCreate($customer, $data)
     {
-        $debit = $this->debitRepository->create([
+        $debitRepository = new DebitRepositoryEloquent(app());
+        $debit = $debitRepository->create([
             'customer_id' => $customer->id,
             'external_id' => (int)$data['debtid'],
             'amount' => $data['debtamount'],
@@ -103,7 +92,8 @@ class DebitsImport implements ToCollection, WithHeadingRow
      */
     private function customerCreate($data)
     {
-        $customer = $this->customerRepository->firstOrNew([
+        $customerRepository = new CustomerRepositoryEloquent(app());
+        $customer = $customerRepository->firstOrNew([
             'government_id' => $data['governmentid'],
         ]);
         $customer->name = $data['name'];

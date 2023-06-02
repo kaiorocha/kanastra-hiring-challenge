@@ -9,8 +9,14 @@ use Illuminate\Http\Request;
 
 class WebhookController extends Controller
 {
+    /**
+     * @var DebitRepositoryEloquent
+     */
     protected $debitRepository;
 
+    /**
+     * @param DebitRepositoryEloquent $debitRepository
+     */
     public function __construct(DebitRepositoryEloquent $debitRepository)
     {
         $this->debitRepository = $debitRepository;

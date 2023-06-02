@@ -2,6 +2,12 @@
 
 O Projeto para o teste técnico da Kanastra disponibiliza uma API Pública para gerenciamento de débitos e seus pagamentos.
 
+### Tecnologias utilizadas:
+
+    - Laravel 10
+    - PHP 8.1
+    - MySQL 8
+    - Docker
 
 Recursos disponíveis para acesso via API:
 

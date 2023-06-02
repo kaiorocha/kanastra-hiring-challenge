@@ -7,6 +7,7 @@ use App\Http\Resources\DebitResource;
 use App\Imports\DebitsImport;
 use App\Models\Debit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
 class DebitController extends Controller
@@ -25,6 +26,7 @@ class DebitController extends Controller
     public function store(DebitStoreRequest $request)
     {
         $csv = $request->file('debitsFile');
+        Log::info("Import {$csv->getClientOriginalName()} started!");
         $extension = $csv->getClientOriginalExtension();
         $name = "debits-" . time() . "." . $extension;
 
@@ -34,6 +36,7 @@ class DebitController extends Controller
 
         Excel::import($import, $path->getPathname());
 
+        Log::info("Import {$csv->getClientOriginalName()} completed!");
         return response()->json($import->debits, 201);
     }
 
