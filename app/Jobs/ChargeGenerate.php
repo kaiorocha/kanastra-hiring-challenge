@@ -12,6 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
 
 class ChargeGenerate implements ShouldQueue
@@ -38,6 +39,7 @@ class ChargeGenerate implements ShouldQueue
             if ($charge) {
                 /** Aqui enviaria a notificação de boleto ao cliente */
                 //Notification::sendNow($charge->debit->customer, new DebitCharge($charge));
+                Log::info("Charge {$charge->id} created! Barcode is: {$charge->barcode}.");
             }
         });
 

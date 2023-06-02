@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('debits', function (Blueprint $table) {
-            $table->uuid('id');
+            $table->uuid('id')->primary();
             $table->bigInteger('external_id');
-            $table->unsignedInteger('customer_id');
+            $table->uuid('customer_id');
             $table->decimal('amount', 10, 2);
             $table->string('paid_by')->nullable();
             $table->decimal('paid_amount', 10, 2)->nullable();
