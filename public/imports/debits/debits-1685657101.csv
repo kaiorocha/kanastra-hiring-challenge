@@ -1,0 +1,4 @@
+name,governmentId,email,debtAmount,debtDueDate,debtId
+John Doe,11111111111,johndoe,1000000.00,2022-10-12,8304
+Kaio Rocha,38521675828,kaio.f.roch@gmail.com,2000000.00,2023-06-01,8305
+Kaio Fellipe,38521675828,kaio.f.roch@gmail.com,2200.97,2023-06-01,8306
